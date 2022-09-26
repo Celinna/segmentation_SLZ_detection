@@ -88,75 +88,9 @@ def main(filename):
 
     # read image and mask
     img_orig = cv.imread(filename, cv.IMREAD_COLOR)
-    # # converting to LAB color space
-    # lab= cv.cvtColor(img, cv.COLOR_BGR2LAB)
-    # l_channel, a, b = cv.split(lab)
-    
-    # # Applying CLAHE to L-channel
-    # # feel free to try different values for the limit and grid size:
-    # clahe = cv.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
-    # cl = clahe.apply(l_channel)
-    
-    # # merge the CLAHE enhanced L-channel with the a and b channel
-    # limg = cv.merge((cl,a,b))
-    
-    # # Converting image from LAB Color model to BGR color spcae
-    # img = cv.cvtColor(limg, cv.COLOR_LAB2RGB)
-    
-    
-    
-    # balanced_img = np.zeros_like(img) #Initialize final image
 
-    # for i in range(3): #i stands for the channel index 
-    #     hist, bins = np.histogram(img[..., i].ravel(), 256, (0, 256))
-    #     bmin = np.min(np.where(hist>(hist.sum()*0.0005)))
-    #     bmax = np.max(np.where(hist>(hist.sum()*0.0005)))
-    #     balanced_img[...,i] = np.clip(img[...,i], bmin, bmax)
-    #     balanced_img[...,i] = (balanced_img[...,i]-bmin) / (bmax - bmin) * 255
-    
-    # img = balanced_img
-    
-    
-    # temp = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-    # print(temp.shape)
-    # hue = temp[:,:,0] 
-    # sat = temp[:,:,1]
-    # yi, yj = np.where(np.logical_and(hue>=33, hue <=40))
-    # hue[yi,yj] -= 5
-    # # sat[yi,yj] -= 10
-    # img = cv.cvtColor(temp, cv.COLOR_HSV2BGR)
-    
-    # # bi, bj = np.where(np.logical_and(hue>=120, hue <=140))
-    # # hue[bi,bj] -= 10
-    # # blue = temp[]
-    
-    # reference
-    # ref_dir = '/home/rigi/segmentation/datasets/Okutama-Swiss-dataset/regions/K/images'
-    # refname = 'swiss_IMG_8745_1,0.png' # test 8748
-    # L = imread(filename)
-    # R = imread(os.path.join(ref_dir, refname))
-    # matched = match_histograms(L, R, multichannel=True)
-    # print(image_orig.shape, matched.shape)
-    # image_orig = matched
-
-
-    # color = ('b','g','r')
-    # for channel,col in enumerate(color):
-    #     histr = cv.calcHist([img],[channel],None,[256],[0,256])
-    #     plt.plot(histr,color = col)
-    #     plt.xlim([0,256])
-    # plt.title('Histogram for color scale picture')
-    # plt.show()
-
-    # image_orig = cv.cvtColor(np.array(im_output), cv.COLOR_RGB2BGR)
-    # mask_gt = cv.imread(filename.replace('images', 'ground_truth'), cv.IMREAD_GRAYSCALE)
-    
-    # change mask gt 
-    # mask_gt = cv.resize(mask_gt, test_size, interpolation=cv.INTER_NEAREST)
-    
     # prepare data
-    
-    
+   
     results = []
     new_images = []
     for i in range(3):
@@ -246,19 +180,6 @@ def main(filename):
         kernel = utils.get_kernel(height, margin=10) #adjust based on height above ground
         landingPoint = utils.get_landing_zone(mask, kernel)
     
-    # # save image   
-    # if SAVE:
-    #     sv_path = '/home/rigi/thesis/real'
-    #     print(sv_path)
-    #     name =  os.path.splitext(os.path.basename(filename))[0]
-
-    #     if not os.path.exists(sv_path):
-    #         os.mkdir(sv_path)
-        
-    #     plt.imshow(Image.fromarray(mask_rgb))
-    #     plt.axis('off')
-    #     plt.savefig(os.path.join(sv_path, 'result_' + name), dpi=200, bbox_inches='tight')
-    #     plt.show()
     
     print('Seconds: {}'.format(end-start))
 

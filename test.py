@@ -146,9 +146,9 @@ if __name__ == '__main__':
     PLOT_SINGLE = True
     LANDING = False
 
-    model_path = {'ddrnet23': '/home/rigi/segmentation/semantic-segmentation/output/ddrnet/fold2',
-                  'ddrnet39': '/home/rigi/segmentation/semantic-segmentation/output/ddrnet39',
-                  'bisenet': '/home/rigi/segmentation/semantic-segmentation/output/bisenet/fold2',
+    model_path = {'ddrnet23': './output/ddrnet/fold2',
+                  'ddrnet39': './output/ddrnet39',
+                  'bisenet': './output/bisenet/fold2',
                   }
     model_dict= {'ddrnet23': 'DDRNet_DDRNet-23slim_SwissOkutama.pth',
                  'ddrnet39': 'DDRNet39_1080_SwissOkutama.pth',
@@ -172,8 +172,7 @@ if __name__ == '__main__':
                    'seg_hrnet_w32_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2', 
                    'seg_hrnet_w48_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2']
         
-        # path = '/home/rigi/segmentation/HRNet-Semantic-Segmentation/output/final_models'
-        path = '/home/rigi/segmentation/HRNet-Semantic-Segmentation/output/final_models'
+        path = './output/final_models'
         cfg_path = "./seg_hrnet_w32_config.yaml"
         path = os.path.join(path, direc[1])
         model_state_file  = os.path.join(path, 'final_state.pth')
