@@ -1,0 +1,77 @@
+CUDNN:
+  BENCHMARK: false
+  DETERMINISTIC: false
+  ENABLED: false
+GPUS: (0,1)
+OUTPUT_DIR: ''
+LOG_DIR: ''
+PRINT_FREQ: 100
+
+DATASET:
+  DATASET: swiss_okutama
+  ROOT: "/work/vita/datasets/Okutama-Swiss-dataset"
+  INFERENCE: true
+  TEST_SET: ''
+  TRAIN_SET: ''
+  NUM_CLASSES: 8
+MODEL:
+  NAME: seg_hrnet
+  ALIGN_CORNERS: False
+  PRETRAINED: ''
+  EXTRA:
+    FINAL_CONV_KERNEL: 1
+    STAGE1:
+      NUM_MODULES: 1
+      NUM_RANCHES: 1
+      BLOCK: BOTTLENECK
+      NUM_BLOCKS:
+      - 4
+      NUM_CHANNELS:
+      - 64
+      FUSE_METHOD: SUM
+    STAGE2:
+      NUM_MODULES: 1
+      NUM_BRANCHES: 2
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 32
+      - 64
+      FUSE_METHOD: SUM
+    STAGE3:
+      NUM_MODULES: 4
+      NUM_BRANCHES: 3
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 32
+      - 64
+      - 128
+      FUSE_METHOD: SUM
+    STAGE4:
+      NUM_MODULES: 3
+      NUM_BRANCHES: 4
+      BLOCK: BASIC
+      NUM_BLOCKS:
+      - 4
+      - 4
+      - 4
+      - 4
+      NUM_CHANNELS:
+      - 32
+      - 64
+      - 128
+      - 256
+      FUSE_METHOD: SUM
+TEST:
+  IMAGE_SIZE:
+  - 640
+  - 480
+  BASE_SIZE: 640
+  BATCH_SIZE_PER_GPU: 1
+  MODEL_FILE: ''

@@ -1,0 +1,6 @@
+[submodule "training/HRNet-Semantic-Segmentation"]
+	path = training/HRNet-Semantic-Segmentation
+	url = git@github.com:Celinna/HRNet-Semantic-Segmentation.git
+[submodule "training/semantic-segmentation"]
+	path = training/semantic-segmentation
+	url = git@github.com:Celinna/semantic-segmentation.git
