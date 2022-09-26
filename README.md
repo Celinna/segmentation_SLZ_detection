@@ -54,7 +54,7 @@ The real-time networks (BiSeNetV2, DDRNet) are trained using the semantic-segmen
 Please see each individual READMEs for training process.
 
 ## Inference
-Create a folder titled `output/` and place the trained models here. In each test file, change the file-paths and model names accordingly.
+Create a folder titled `output/` and place the trained models here. Some pre-trained models can be found [here](https://drive.google.com/file/d/1ACKSEFxI0ZktuV6y5Pe55caf0fxLaVQp/view?usp=sharing). In each test file, change the file-paths and model names accordingly.
 
 Two testing files are available: 
 * `test.py` performs inference on Swiss and Okutama dataset images.
