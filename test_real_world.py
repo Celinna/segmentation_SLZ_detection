@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Copyright (c) Microsoft
 # Licensed under the MIT License.
-# Written by Ke Sun (sunk@mail.ustc.edu.cn)
+# Written by Ke Sun (celinna.ju@rigi.tech)
 # ------------------------------------------------------------------------------
 import os
 import glob 
@@ -21,10 +21,6 @@ from config import update_config
 
 import matplotlib.pyplot as plt
 from PIL import Image
-
-# from skimage.io import imread, imsave
-# from skimage import exposure
-# from skimage.exposure import match_histograms
 
 
 def preprocess(image, size, dataset, mean=None, std=None):
@@ -88,9 +84,8 @@ def main(filename):
 
     # read image and mask
     img_orig = cv.imread(filename, cv.IMREAD_COLOR)
-
-    # prepare data
-   
+    
+    # filtering
     results = []
     new_images = []
     for i in range(3):
@@ -108,6 +103,7 @@ def main(filename):
             img[:,:,2] = (img[:,:,2]*0.95).clip(0,255)
             new_images.append(img)
         
+        # prepare data
         image = preprocess(img, test_size, dataset, mean=mean, std=std)
         
         # start inference
@@ -177,9 +173,9 @@ def main(filename):
         plt.show()
 
     if LANDING:
-        kernel = utils.get_kernel(height, margin=10) #adjust based on height above ground
+        kernel = utils.get_kernel(height=20, margin=10) #adjust based on height above ground
         landingPoint = utils.get_landing_zone(mask, kernel)
-    
+        print("Landing point at {}".format(landingPoint))    
     
     print('Seconds: {}'.format(end-start))
 
@@ -194,35 +190,41 @@ if __name__ == '__main__':
 
     # configure input image
     image_dir = '/home/rigi/test_data/flights/orig'
-    # image_dir = '/home/rigi/segmentation/datasets/Okutama-Swiss-dataset/regions/K/images'
-    # filename = 'swiss_IMG_8745_1,0.png' # test 8748
     filename = 'vlcsnap-2022-09-07-22h01m43s656.png'
     # file = os.path.join(image_dir, 'images', filename)
     file = os.path.join(image_dir, filename)
+
+    model_path = {'ddrnet23': 'ddrnet/fold2',
+                  'ddrnet39': 'ddrnet39',
+                  'bisenet': 'bisenet/fold2',
+                  'hrnet_w32_1080x1920': 'seg_hrnet_w32_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2',
+                  'hrnet_w48_1080x1920': 'seg_hrnet_w48_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2',
+                  'hrnet_w32_480x640': 'seg_hrnet_w32_train_480x640_sgd_lr1e-2_wd5e-4_bs_12_epoch100_fold2_final',
+                  }
     
-    # configure model location
-    if REALTIME:
-        path = "/home/rigi/segmentation/semantic-segmentation/output/bisenet/fold2"
-        model_name = 'BiSeNetv2_ResNet-18_SwissOkutama.pth'
-        cfg_path = "./ddrnet39.yaml"
-        model_state_file = os.path.join(path, model_name)
-        
+    model_dict= {'ddrnet23': 'DDRNet_DDRNet-23slim_SwissOkutama.pth',
+                 'ddrnet39': 'DDRNet39_1080_SwissOkutama.pth',
+                 'bisenet': 'BiSeNetv2_ResNet-18_SwissOkutama.pth'}
+    
+    # configure input image
+    image_dir = '/home/rigi/segmentation/datasets/Okutama-Swiss-dataset/regions/J'
+    filename = 'swiss_IMG_8776_1,1.png' # test 8748
+    file = os.path.join(image_dir, 'images', filename)
+    
+    # configure model 
+    model = 'hrnet_w32_480x640'
+    cfg_path = os.path.join("./configs", model + '.yaml')
+    if 'hrnet' in model:
+        print('here')
+        REALTIME = False
+        model_state_file  = os.path.join('./output', model_path[model], 'best.pth')
     else:
-        direc = ['seg_hrnet_w18_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_4_epoch100_fold2', 
-                   'seg_hrnet_w32_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2', 
-                   'seg_hrnet_w48_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2',
-                   'seg_hrnet_w32_train_480x640_sgd_lr1e-2_wd5e-4_bs_12_epoch100_fold2_n']
+        REALTIME = True
+        model_state_file = os.path.join('./output', model_path[model], model_dict[model])
         
-        # path = '/home/rigi/segmentation/HRNet-Semantic-Segmentation/output/final_models'
-        path = '/home/rigi/segmentation/HRNet-Semantic-Segmentation/output/final_models'
-        cfg_path = "./seg_hrnet_w32_config.yaml"
-        path = os.path.join(path, direc[-1])
-        model_state_file  = os.path.join(path, 'best.pth')
+    # save image location
+    sv_path = os.path.join('./output', model_path[model], 'test_results')
     
-    # print(model_state_file)
-   
-    # print(file)
-    # main(file)
     print(image_dir)
     for file in glob.glob(image_dir + "/*.png"):
         print(file)

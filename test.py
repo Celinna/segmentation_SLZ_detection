@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Copyright (c) Microsoft
 # Licensed under the MIT License.
-# Written by Ke Sun (sunk@mail.ustc.edu.cn)
+# Written by Ke Sun (celinna.ju@rigi.tech)
 # ------------------------------------------------------------------------------
 import os
 import glob 
@@ -120,10 +120,10 @@ def main(filename):
     if LANDING:
         kernel = utils.get_kernel(height, margin=10) #adjust based on height above ground
         landingPoint = utils.get_landing_zone(mask, kernel)
+        print('Landing point detected at {}'.format(landingPoint))
     
     # save image   
     if SAVE:
-        sv_path = os.path.join(path, 'test_results')
         print(sv_path)
         name =  os.path.splitext(os.path.basename(filename))[0]
 
@@ -141,46 +141,47 @@ def main(filename):
 if __name__ == '__main__':
     # Settings
     SAVE = False
-    REALTIME = True
     PLOT3 = False
     PLOT_SINGLE = True
     LANDING = False
 
-    model_path = {'ddrnet23': './output/ddrnet/fold2',
-                  'ddrnet39': './output/ddrnet39',
-                  'bisenet': './output/bisenet/fold2',
+    model_path = {'ddrnet23': 'ddrnet/fold2',
+                  'ddrnet39': 'ddrnet39',
+                  'bisenet': 'bisenet/fold2',
+                  'hrnet_w32_1080x1920': 'seg_hrnet_w32_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2',
+                  'hrnet_w48_1080x1920': 'seg_hrnet_w48_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2',
+                  'hrnet_w32_480x640': 'seg_hrnet_w32_train_480x640_sgd_lr1e-2_wd5e-4_bs_12_epoch100_fold2_final',
                   }
+    
     model_dict= {'ddrnet23': 'DDRNet_DDRNet-23slim_SwissOkutama.pth',
                  'ddrnet39': 'DDRNet39_1080_SwissOkutama.pth',
                  'bisenet': 'BiSeNetv2_ResNet-18_SwissOkutama.pth'}
     
     # configure input image
     image_dir = '/home/rigi/segmentation/datasets/Okutama-Swiss-dataset/regions/J'
-    
     filename = 'swiss_IMG_8776_1,1.png' # test 8748
     file = os.path.join(image_dir, 'images', filename)
     
-    # configure model location
-    if REALTIME:
-        cfg_path = "./configs/ddrnet39.yaml"
-        model = 'ddrnet39'
-        path = model_path[model]
-        model_state_file = os.path.join(model_path[model], model_dict[model])
-        
+    # configure model 
+    model = 'hrnet_w32_480x640'
+    cfg_path = os.path.join("./configs", model + '.yaml')
+    if 'hrnet' in model:
+        print('here')
+        REALTIME = False
+        model_state_file  = os.path.join('./output', model_path[model], 'best.pth')
     else:
-        direc = ['seg_hrnet_w18_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_4_epoch100_fold2', 
-                   'seg_hrnet_w32_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2', 
-                   'seg_hrnet_w48_train_1080x1920_sgd_lr1e-2_wd5e-4_bs_2_epoch100_fold2']
+        REALTIME = True
+        model_state_file = os.path.join('./output', model_path[model], model_dict[model])
         
-        path = './output/final_models'
-        cfg_path = "./seg_hrnet_w32_config.yaml"
-        path = os.path.join(path, direc[1])
-        model_state_file  = os.path.join(path, 'final_state.pth')
+    # save image location
+    sv_path = os.path.join('./output', model_path[model], 'test_results')
     
     print(model_state_file)
-   
     print(file)
+    
     main(file)
+    
+    # for multiple images in a folder
     # for file in glob.glob(image_dir + "/images/*.png"):
     #     print(file)
     #     main(file)
